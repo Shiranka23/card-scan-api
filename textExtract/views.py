@@ -1,9 +1,8 @@
-from django.shortcuts import render
 from rest_framework import generics
 from .models import CardData
 from .serializers import ImageUploadSerializer
 from rest_framework.response import Response
-import json
+from decouple import config
 # Form recognition from azure
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.credentials import AzureKeyCredential
@@ -11,8 +10,8 @@ from azure.ai.formrecognizer import FormRecognizerClient
 
 
 # credentials
-API_KEY="09ac8dbcca144ea5bf73de60b3948294"
-ENDPOINT="https://biz-card.cognitiveservices.azure.com/"
+API_KEY=config("AZURE_API_KEY")
+ENDPOINT=config("AZURE_ENDPOINT")
 
 
 class TextExtractViewSet(generics.ListAPIView):
@@ -32,7 +31,7 @@ class TextExtractViewSet(generics.ListAPIView):
             poller = form_recognizer_client.begin_recognize_business_cards(
                 business_card=f, locale="en-US")
         business_cards = poller.result()
-        print(business_cards)
+        # print(business_cards)
         for idx, business_card in enumerate(business_cards):
             print("--------Recognizing business card #{}--------".format(idx +
                                                                          1))
