@@ -3,11 +3,10 @@ from .models import CardData
 from .serializers import ImageUploadSerializer
 from rest_framework.response import Response
 from decouple import config
-# Form recognition from azure
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormRecognizerClient
-
+import json
 
 # credentials
 API_KEY=config("AZURE_API_KEY")
@@ -21,20 +20,23 @@ class TextExtractViewSet(generics.ListAPIView):
     def post(self, request, *args, **kwargs):
         file=request.data['file']
         file_name=request.data['file'].name
-        print(file_name)
+        # print(file_name)
         obj=CardData.objects.create(image=file)
         obj.save()
         image_url ='./media/assets/'+str(file_name)
         form_recognizer_client = FormRecognizerClient(
             endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY))
         with open(image_url, "rb") as f:
-            poller = form_recognizer_client.begin_recognize_business_cards(
-                business_card=f, locale="en-US")
-        business_cards = poller.result()
-        # print(business_cards)
+            try:
+                poller = form_recognizer_client.begin_recognize_business_cards(
+                    business_card=f, locale="en-US")
+                business_cards = poller.result()
+            # print(business_cards)
+            except:
+                return Response({"error_message":"Unable to detect Card. Please place the card properly"})
         for idx, business_card in enumerate(business_cards):
-            print("--------Recognizing business card #{}--------".format(idx +
-                                                                         1))
+            # print("--------Recognizing business card #{}--------".format(idx +
+            #                                                              1))
             contact_names = business_card.fields.get("ContactNames")
             if contact_names:
                 for contact_name in contact_names.value:
@@ -79,7 +81,7 @@ class TextExtractViewSet(generics.ListAPIView):
             websites = business_card.fields.get("Websites")
             if websites:
                 for website in websites.value:
-                    site:website.value
+                    site=website.value
                     # print("Website: {}".format(
                     #     website.value))
             else:
@@ -99,7 +101,7 @@ class TextExtractViewSet(generics.ListAPIView):
                     # print("Mobile phone number: {}".format(
                     #     phone.value))
             else:
-                phone=''
+                number=''
             faxes = business_card.fields.get("Faxes")
             if faxes:
                 for fax in faxes.value:
@@ -122,16 +124,19 @@ class TextExtractViewSet(generics.ListAPIView):
                     #     other_phone.value))
             else:
                 other_phone=''
-            data={
+            card_data={
                 "Name":name,
                 "Company Name":company,
                 "Department":dprmt,
                 "Email":mail,
                 "Fax":faxNum,
-                "Work Number":phone,
+                "Work Number":number,
                 "Website":site,
                 "Address":add
             }
-        
+            data={
+                "status code":200,
+                "message":"Success",
+                "data":card_data
+            }
         return Response(data)
-    
