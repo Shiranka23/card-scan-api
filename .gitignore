@@ -1,1 +1,5 @@
 .env
+/media
+/env
+nohup.out
+/db.sqlite3
