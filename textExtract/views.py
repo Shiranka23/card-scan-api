@@ -7,6 +7,8 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormRecognizerClient
 import json
+from uuid import uuid4
+
 
 # credentials
 API_KEY=config("AZURE_API_KEY")
@@ -19,11 +21,14 @@ class TextExtractViewSet(generics.ListAPIView):
 
     def post(self, request, *args, **kwargs):
         file=request.data['file']
-        file_name=request.data['file'].name
+        filename=request.data['file'].name
+        ext=filename.split()[-1]
+        file_name = '{}.{}'.format(uuid4().hex, ext)
         # print(file_name)
-        obj=CardData.objects.create(image=file)
+        obj=CardData.objects.create(image=file,name=file_name)
         obj.save()
         image_url ='./media/assets/'+str(file_name)
+        # image_url ='assets/'+str(file_name)
         form_recognizer_client = FormRecognizerClient(
             endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY))
         with open(image_url, "rb") as f:
