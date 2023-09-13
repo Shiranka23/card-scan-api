@@ -29,7 +29,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1"]
+ALLOWED_HOSTS = ['*']
 
 if env("DJANGO_ALLOWED_HOST"):
     ALLOWED_HOSTS.append(env("DJANGO_ALLOWED_HOST"))
