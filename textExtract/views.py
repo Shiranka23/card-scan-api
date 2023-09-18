@@ -31,128 +31,159 @@ class TextExtractViewSet(generics.ListAPIView):
         image_url = './media/assets/'+str(file_name)
         current_site = get_current_site(request).domain
         # sample document
-        formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
-        # formUrl ="http://"+str(current_site)+image_url
+        # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
+        formUrl ="http://"+str(current_site)+image_url
+        # formUrl ='https://mikesblog.com/wp-content/uploads/2019/10/shad-mike-michelini-chinese-business-card.jpg'
         # print(formUrl)
-        document_analysis_client = DocumentAnalysisClient(
-            endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
-        )
-
-        poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrl)
-        business_cards = poller.result()
-
+        try:
+            document_analysis_client = DocumentAnalysisClient(
+                endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
+            )
+            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrl)
+            business_cards = poller.result()
+        except:
+            return({"error_message":"Please place your card properly.."})
         for idx, business_card in enumerate(business_cards.documents):
-            print("--------Analyzing business card #{}--------".format(idx + 1))
+            # print("--------Analyzing business card #{}--------".format(idx + 1))
             contact_names = business_card.fields.get("ContactNames")
             if contact_names:
                 for contact_name in contact_names.value:
                     print(
-                        "Contact First Name: {} has confidence: {}".format(
+                        "Contact First Name: {} ".format(
                             contact_name.value["FirstName"].value,
-                            contact_name.value[
-                                "FirstName"
-                            ].confidence,
                         )
                     )
+                    name=contact_name.value["FirstName"].value+contact_name.value['LastName'].value
                     print(
-                        "Contact Last Name: {} has confidence: {}".format(
+                        "Contact Last Name: {} ".format(
                             contact_name.value["LastName"].value,
-                            contact_name.value[
-                                "LastName"
-                            ].confidence,
                         )
                     )
+            else:
+                name=''
+                    
             company_names = business_card.fields.get("CompanyNames")
             if company_names:
                 for company_name in company_names.value:
                     print(
-                        "Company Name: {} has confidence: {}".format(
-                            company_name.value, company_name.confidence
+                        "Company Name: {} ".format(
+                            company_name.value
                         )
                     )
+                    company=company_name.value
+            else:
+                company=''
             departments = business_card.fields.get("Departments")
             if departments:
                 for department in departments.value:
                     print(
-                        "Department: {} has confidence: {}".format(
-                            department.value, department.confidence
+                        "Department: {} ".format(
+                            department.value
                         )
                     )
+                    dprmt=department.value
+            else:
+                dprmt=''
             job_titles = business_card.fields.get("JobTitles")
             if job_titles:
                 for job_title in job_titles.value:
                     print(
-                        "Job Title: {} has confidence: {}".format(
-                            job_title.value, job_title.confidence
+                        "Job Title: {} ".format(
+                            job_title.value
                         )
                     )
+                    job=job_title.value
+            else:
+                job=''
             emails = business_card.fields.get("Emails")
             if emails:
                 for email in emails.value:
                     print(
-                        "Email: {} has confidence: {}".format(email.value, email.confidence)
+                        "Email: {} ".format(email.value)
                     )
+                    mail=email.value
+            else:
+                mail=''
             websites = business_card.fields.get("Websites")
             if websites:
                 for website in websites.value:
                     print(
-                        "Website: {} has confidence: {}".format(
-                            website.value, website.confidence
+                        "Website: {} ".format(
+                            website.value
                         )
                     )
+                    site=website.value
+            else:
+                site=''
             addresses = business_card.fields.get("Addresses")
             if addresses:
                 for address in addresses.value:
-                    print(
-                        "Address: {} has confidence: {}".format(
-                            address.value, address.confidence
-                        )
-                    )
+                    add=address.value
+                    # print("Address: {}".format(
+                    #     address.value))
+            else:
+                add=''
+                    
             mobile_phones = business_card.fields.get("MobilePhones")
             if mobile_phones:
                 for phone in mobile_phones.value:
                     print(
-                        "Mobile phone number: {} has confidence: {}".format(
-                            phone.content, phone.confidence
+                        "Mobile phone number: {} ".format(
+                            phone.content
                         )
                     )
+                    phone=phone.content
+            else:
+                phone=''
             faxes = business_card.fields.get("Faxes")
             if faxes:
                 for fax in faxes.value:
                     print(
-                        "Fax number: {} has confidence: {}".format(
-                            fax.content, fax.confidence
+                        "Fax number: {} ".format(
+                            fax.content
                         )
                     )
+                    faxNum=fax.content
+            else:
+                faxNum=''
             work_phones = business_card.fields.get("WorkPhones")
             if work_phones:
                 for work_phone in work_phones.value:
                     print(
-                        "Work phone number: {} has confidence: {}".format(
-                            work_phone.content, work_phone.confidence
+                        "Work phone number: {} ".format(
+                            work_phone.content
                         )
                     )
+                    workPhone=work_phone.content
+            workPhone=''
             other_phones = business_card.fields.get("OtherPhones")
             if other_phones:
                 for other_phone in other_phones.value:
                     print(
-                        "Other phone number: {} has confidence: {}".format(
-                            other_phone.value, other_phone.confidence
+                        "Other phone number: {} ".format(
+                            other_phone.value
                         )
                     )
+                    otherPhone=other_phone.value
+            else:
+                otherPhone=''
             print("----------------------------------------")
 
             card_data = {
-                "Name": contact_names,
-                "Company Name": company_names,
-                "Department": departments,
-                "Job Titles": job_titles,
-                "Email": emails,
-                "Fax": faxes,
-                "Work Number": work_phones,
-                "Website": websites,
-                "Address": addresses
+                "Name": name,
+                "Company Name": company,
+                "Department": dprmt,
+                "Job Titles": job,
+                "Email": mail,
+                "Fax": faxNum,
+                "Work Number": phone,
+                "Other Number": otherPhone,
+                "Website": site,
+                # "Address": add
             }
+            # card_data=json.dumps(card_data, default=str)
+            # card_data=json.load(card_data)
+            # print(card_data)
             data = {
                 "status code": 200,
                 "message": "Success",
