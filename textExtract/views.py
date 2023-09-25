@@ -9,7 +9,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from uuid import uuid4
 
-file_choices=('jpeg','jpg','pdf','png','tiff','tif')
+
 
 # Credentials
 API_KEY = config("AZURE_API_KEY")
