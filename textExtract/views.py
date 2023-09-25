@@ -136,16 +136,16 @@ class TextExtractViewSet(generics.ListAPIView):
                     otherPhone=[]
                
             card_info={
-                "name":name,
-                "company":company,
-                "address":"add",
-                "Phone numbers":phone_number,
-                "fax ":faxNum,
-                "email":mail,
-                "job":job,
-                "department":dprmt,
-                "website":site,
-                "form url":"formUrls"
+                # "name":name,
+                # "company":company,
+                # "address":"add",
+                # "Phone numbers":phone_number,
+                # "fax ":faxNum,
+                # "email":mail,
+                # "job":job,
+                # "department":dprmt,
+                # "website":site,
+                # "form url":"formUrls"
             }
             
             card_data.append(card_info)
