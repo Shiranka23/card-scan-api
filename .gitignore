@@ -1,4 +1,6 @@
-env
-venv
-db.sqlite3
-media
+.env
+/media
+/env
+nohup.out
+/db.sqlite3
+/venv
