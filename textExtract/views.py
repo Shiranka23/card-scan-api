@@ -145,7 +145,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
-                "form url":formUrls
+                "form url":"formUrls"
             }
             
             card_data.append(card_info)
