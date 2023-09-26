@@ -34,8 +34,7 @@ def get( request, file):
 class TextExtractViewSet(generics.ListAPIView):
     queryset = CardData.objects.all()
     serializer_class = ImageUploadSerializer
-
-
+    
     def post(self, request, *args, **kwargs):
         try:
             # Get uploaded file and generate a unique filename
