@@ -50,7 +50,7 @@ class TextExtractViewSet(generics.ListAPIView):
 
             # creating URL of the uploaded image
             formUrls = f'http://{current_site}{image_url}'
-            print(formUrls)
+            # print(formUrls)
 
             #  sample docs
             # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
@@ -174,6 +174,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
+                "file url":formUrls
             }
             
             card_data.append(card_info)
