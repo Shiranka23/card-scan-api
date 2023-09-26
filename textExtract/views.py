@@ -35,8 +35,8 @@ class TextExtractViewSet(generics.ListAPIView):
             formUrls = f'http://{current_site}{image_url}'
 
             #  sample docs
-            # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
-            formUrl ='https://www.asianbusinesscards.com/wp-content/uploads/2019/03/chinese-business-card-translation-samples-walmart-445-sch.jpg'
+            formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
+            # formUrl ='https://www.asianbusinesscards.com/wp-content/uploads/2019/03/chinese-business-card-translation-samples-walmart-445-sch.jpg'
 
             document_analysis_client = DocumentAnalysisClient(
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
