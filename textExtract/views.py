@@ -169,4 +169,4 @@ class TextExtractViewSet(generics.ListAPIView):
         except Exception as e:
             error_message = str(e)
             print(error_message)
-            return Response({"error_message": error_message}, status=500)
+            return Response({"error_message": "error_message"}, status=500)
