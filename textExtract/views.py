@@ -61,7 +61,7 @@ class TextExtractViewSet(generics.ListAPIView):
 
             poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrls)
             business_cards = poller.result()
-            # print(business_cards)
+            print(business_cards.documents)
             card_data = []
             phone_number=[]
             
@@ -129,8 +129,8 @@ class TextExtractViewSet(generics.ListAPIView):
                 addresses = business_card.fields.get("Addresses")
                 if addresses:
                     for address in addresses.value:
-                        # print("address: ",address.value)
-                        add=address.value
+                        # print("address: ",address.content)
+                        add=address.content
                 else:
                     add=" "
                 mobile_phones = business_card.fields.get("MobilePhones")
@@ -166,14 +166,14 @@ class TextExtractViewSet(generics.ListAPIView):
             card_info={
                 "name":name,
                 "company":company,
-                "address":"add",
+                "address":add,
                 "Phone numbers":phone_number,
                 "fax ":faxNum,
                 "email":mail,
                 "job":job,
                 "department":dprmt,
                 "website":site,
-                "file url":formUrls
+                # "file url":formUrls
             }
             
             card_data.append(card_info)
