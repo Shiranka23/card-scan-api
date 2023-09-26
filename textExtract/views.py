@@ -9,15 +9,32 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from uuid import uuid4
 
+from django.http import HttpResponse, HttpResponseNotFound
+from pathlib import Path
+from os.path import join
 
 
 # Credentials
 API_KEY = config("AZURE_API_KEY")
 ENDPOINT = config("AZURE_ENDPOINT")
 
+def get( request, file):
+    file_location=join(Path(__file__).resolve().parent.parent, 'media','assets' , file)
+    try:    
+        with open(file_location, 'rb') as f:
+            file_data = f.read()
+            ext = file.split(".")[-1]
+            response = HttpResponse(content=file_data, content_type=f'image/{ext}')
+            return response
+    except IOError:
+    # handle file not exist case here
+        response = HttpResponseNotFound('<h1>File not exist</h1>')
+        return response
+
 class TextExtractViewSet(generics.ListAPIView):
     queryset = CardData.objects.all()
     serializer_class = ImageUploadSerializer
+
 
     def post(self, request, *args, **kwargs):
         try:
@@ -28,12 +45,12 @@ class TextExtractViewSet(generics.ListAPIView):
             file_name = f'{uuid4().hex}.{ext}'
             obj = CardData.objects.create(image=file, name=file_name)
             obj.save()
-            image_url = f'/media/assets/{file_name}'
+            image_url = f'/upload/{file_name}'
             current_site = get_current_site(request).domain
 
             # creating URL of the uploaded image
             formUrls = f'http://{current_site}{image_url}'
-            # print(formUrls)
+            print(formUrls)
 
             #  sample docs
             # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"

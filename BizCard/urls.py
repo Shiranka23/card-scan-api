@@ -22,11 +22,10 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('upload/',views.TextExtractViewSet.as_view(), name='upload'),
-    # path('uploads/',tests, name='upload'),
-    # path('api-auth/', include('rest_framework.urls')),
-]
+    path('upload/<file>',views.get, name='upload'),
+]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+# if settings.DEBUG:
+# urlpatterns + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

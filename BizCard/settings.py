@@ -28,11 +28,12 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+# DEBUG = os.environ.get('DEBUG')
+DEBUG = False
 
 
 
-ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","39b8-103-179-9-158.ngrok.io"]
+ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","c872-103-179-9-158.ngrok-free.app"]
 
 ALLOWED_HOSTS=["*"]
 
@@ -138,7 +139,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/' 
+MEDIA_URL = 'media/' 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
