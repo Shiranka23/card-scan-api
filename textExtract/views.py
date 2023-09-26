@@ -155,12 +155,10 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
-                "form url this is for test only later it will be remove ":formUrls,
-                "filename":file_name
+                # "form url this is for test only later it will be remove ":formUrls,
             }
             
             card_data.append(card_info)
-            # print(card_data)
             response_data = {
                 "status_code": 200,
                 "message": "Success",
