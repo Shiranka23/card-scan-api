@@ -9,7 +9,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from uuid import uuid4
 
-file_choices=('jpeg','jpg','pdf','png','tiff','tif')
+
 
 # Credentials
 API_KEY = config("AZURE_API_KEY")
@@ -34,8 +34,12 @@ class TextExtractViewSet(generics.ListAPIView):
             formUrls = f'http://{current_site}{image_url}'
             # print(formUrls)
             #  sample docs
+
             # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
             formUrl ='https://www.asianbusinesscards.com/wp-content/uploads/2019/03/korean-business-card-translation-samples-src-445-kor.jpg'
+            formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
+            # formUrl ='https://trbahadurpur.com/wp-content/uploads/2023/05/beauty-parlor-visiting-card-2.jpg'
+
             document_analysis_client = DocumentAnalysisClient(
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
             )
@@ -161,7 +165,7 @@ class TextExtractViewSet(generics.ListAPIView):
             response_data = {
                 "status_code": 200,
                 "message": "Success",
-                "data": card_data
+                "data": "card_data"
             }
             return Response(response_data)
         except Exception as e:
