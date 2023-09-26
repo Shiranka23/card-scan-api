@@ -157,7 +157,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
-                "form url this is for test only  later it will be remove ":formUrls
+                "form url this is for test only later it will be remove ":formUrls
             }
             
             card_data.append(card_info)
@@ -165,7 +165,7 @@ class TextExtractViewSet(generics.ListAPIView):
             response_data = {
                 "status_code": 200,
                 "message": "Success",
-                "data": "card_data"
+                "data": card_data
             }
             return Response(response_data)
         except Exception as e:
