@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from dotenv import main
 main.load_dotenv()
+
 # import environs
 from pathlib import Path
 env=os.getenv
@@ -32,10 +33,6 @@ DEBUG = os.environ.get('DEBUG')
 
 
 ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co"]
-
-ALLOWED_HOSTS = ['*']
-
-ALLOWED_HOSTS = ["*"]
 
 
 if env("DJANGO_ALLOWED_HOST"):
