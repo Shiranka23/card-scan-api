@@ -32,7 +32,7 @@ DEBUG = os.environ.get('DEBUG')
 
 
 
-ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co"]
+ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","39b8-103-179-9-158.ngrok.io"]
 
 ALLOWED_HOSTS=["*"]
 

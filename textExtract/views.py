@@ -33,17 +33,19 @@ class TextExtractViewSet(generics.ListAPIView):
 
             # creating URL of the uploaded image
             formUrls = f'http://{current_site}{image_url}'
+            # print(formUrls)
 
             #  sample docs
-            formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
-            # formUrl ='https://www.asianbusinesscards.com/wp-content/uploads/2019/03/chinese-business-card-translation-samples-walmart-445-sch.jpg'
+            # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
+           
 
             document_analysis_client = DocumentAnalysisClient(
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
             )
 
-            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrl)
+            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrls)
             business_cards = poller.result()
+            # print(business_cards)
             card_data = []
             phone_number=[]
             
@@ -55,12 +57,12 @@ class TextExtractViewSet(generics.ListAPIView):
                     for contact_name in contact_names.value:
                         # firstname=[contact_name.value["FirstName"].value if contact_name.value["FirstName"].value else []]
                         # lastname=[contact_name.value["LastName"].value if contact_name.value["LastName"].value else []]
-                        if contact_name.value["FirstName"].value:
+                        if contact_name.value["FirstName"]:
                             # print("firstname: ",contact_name.value["FirstName"].value)
                             firstname=contact_name.value["FirstName"].value
                         else:
                             firstname=" "
-                        if contact_name.value["LastName"].value:
+                        if contact_name.value["LastName"]:
                             # print("lastname: ",contact_name.value["LastName"].value)
                             lastname=contact_name.value["LastName"].value
                         else:
@@ -155,7 +157,6 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
-                "form url this is for test only later it will be remove ":formUrls,
             }
             
             card_data.append(card_info)
