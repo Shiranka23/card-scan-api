@@ -30,15 +30,13 @@ class TextExtractViewSet(generics.ListAPIView):
             obj.save()
             image_url = f'/media/assets/{file_name}'
             current_site = get_current_site(request).domain
-            # Form URL of the uploaded image
-            formUrls = f'http://{current_site}{image_url}'
-            # print(formUrls)
-            #  sample docs
 
+            # creating URL of the uploaded image
+            formUrls = f'http://{current_site}{image_url}'
+
+            #  sample docs
             # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
             formUrl ='https://www.asianbusinesscards.com/wp-content/uploads/2019/03/korean-business-card-translation-samples-src-445-kor.jpg'
-            formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
-            # formUrl ='https://trbahadurpur.com/wp-content/uploads/2023/05/beauty-parlor-visiting-card-2.jpg'
 
             document_analysis_client = DocumentAnalysisClient(
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
