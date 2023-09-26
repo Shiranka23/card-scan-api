@@ -43,7 +43,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
             )
 
-            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrls)
+            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrl)
             business_cards = poller.result()
             # print(business_cards)
             card_data = []
