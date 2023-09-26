@@ -36,7 +36,7 @@ class TextExtractViewSet(generics.ListAPIView):
             # print(formUrls)
 
             #  sample docs
-            # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
+            formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
            
 
             document_analysis_client = DocumentAnalysisClient(
@@ -157,6 +157,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
+                "file url":formUrls
             }
             
             card_data.append(card_info)
