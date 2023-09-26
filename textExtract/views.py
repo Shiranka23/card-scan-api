@@ -35,7 +35,7 @@ class TextExtractViewSet(generics.ListAPIView):
             # print(formUrls)
             #  sample docs
             # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
-            formUrl ='https://trbahadurpur.com/wp-content/uploads/2023/05/beauty-parlor-visiting-card-2.jpg'
+            formUrl ='https://www.asianbusinesscards.com/wp-content/uploads/2019/03/korean-business-card-translation-samples-src-445-kor.jpg'
             document_analysis_client = DocumentAnalysisClient(
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
             )
@@ -51,6 +51,8 @@ class TextExtractViewSet(generics.ListAPIView):
                 contact_names = business_card.fields.get("ContactNames")
                 if contact_names:
                     for contact_name in contact_names.value:
+                        # firstname=[contact_name.value["FirstName"].value if contact_name.value["FirstName"].value else []]
+                        # lastname=[contact_name.value["LastName"].value if contact_name.value["LastName"].value else []]
                         if contact_name.value["FirstName"].value:
                             # print("firstname: ",contact_name.value["FirstName"].value)
                             firstname=contact_name.value["FirstName"].value
@@ -61,19 +63,21 @@ class TextExtractViewSet(generics.ListAPIView):
                             lastname=contact_name.value["LastName"].value
                         else:
                             lastname=" "
-                        name=contact_name.value["FirstName"].value+" "+contact_name.value["LastName"].value
+                        name=firstname+" "+lastname
                 else:
                     name=' '
                 company_names = business_card.fields.get("CompanyNames")
                 if company_names:
-                    for company_name in company_names.value:
-                        # print("company: ",company_name.value)
-                        company=company_name.value
+                    company=[company_name.value for company_name in company_names.value]
+                    # for company_name in company_names.value:
+                    # print("company: ",company_name.value)
+                        # company = company_name.value
                 else:
                     company=''
                 departments = business_card.fields.get("Departments")
                 if departments:
                     dprmt=[department.value for department in departments.value]
+                    # for department in departments.value:
                         # print("department: ",department.value)
                         # dprmt=department.value
                 else:
@@ -81,6 +85,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 job_titles = business_card.fields.get("JobTitles")
                 if job_titles:
                     job=[job_title.value for job_title in job_titles.value]
+                    # for job_title in job_titles.value:
                         # print("job title: ",job_title.value)
                         # job=job_title.value
                 else:
@@ -88,6 +93,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 emails = business_card.fields.get("Emails")
                 if emails:
                     mail=[email.value for email in emails.value]
+                    # for email in emails.value:
                         # print("email: ",email.value)
                         # mail=email.value
                 else:
@@ -95,6 +101,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 websites = business_card.fields.get("Websites")
                 if websites:
                     site=[website.value for website in websites.value]
+                    # for website in websites.value:
                         # print("website: ",website.value)
                         # site=website.value
                 else:
@@ -102,7 +109,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 addresses = business_card.fields.get("Addresses")
                 if addresses:
                     for address in addresses.value:
-                        print("address:___  ",address.value)
+                        print("address: ",address.value)
                         add=address.value
                 else:
                     add=" "
@@ -116,6 +123,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 faxes = business_card.fields.get("Faxes")
                 if faxes:
                     faxNum=[fax.content for fax in faxes.value]
+                    # for fax in faxes.value:
                         # print("fax: ", fax.content)
                         # faxNum=fax.content
                 else:
@@ -145,7 +153,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
-                "form url":formUrls
+                "form url this is for test only  later it will be remove ":formUrls
             }
             
             card_data.append(card_info)
