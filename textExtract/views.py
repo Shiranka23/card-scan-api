@@ -42,7 +42,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
             )
 
-            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrls)
+            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrl)
             business_cards = poller.result()
             card_data = []
             phone_number=[]
@@ -111,7 +111,7 @@ class TextExtractViewSet(generics.ListAPIView):
                 addresses = business_card.fields.get("Addresses")
                 if addresses:
                     for address in addresses.value:
-                        print("address: ",address.value)
+                        # print("address: ",address.value)
                         add=address.value
                 else:
                     add=" "
