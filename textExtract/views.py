@@ -157,7 +157,8 @@ class TextExtractViewSet(generics.ListAPIView):
                 "job":job,
                 "department":dprmt,
                 "website":site,
-                "form url this is for test only later it will be remove ":formUrls
+                "form url this is for test only later it will be remove ":formUrls,
+                "filename":file_name
             }
             
             card_data.append(card_info)
