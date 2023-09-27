@@ -105,6 +105,13 @@ class TextExtractViewSet(generics.ListAPIView):
             poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrls)
             business_cards = poller.result()
             # print(business_cards.documents)
+
+            instance=CardData.objects.get(name=file_name)
+            instance.image.delete()
+            instance.delete()
+            # instance=CardData.objects.get(name=file_name)
+            # print('instance')
+
             card_data = []
             phone_number=[]
             
