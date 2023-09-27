@@ -1,17 +1,26 @@
 from rest_framework import generics
-from .models import CardData
-from .serializers import ImageUploadSerializer
 from rest_framework.response import Response
-from decouple import config
-from django.contrib.sites.shortcuts import get_current_site
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer import DocumentAnalysisClient
-from uuid import uuid4
 
+from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseNotFound
+from django.contrib.sites.shortcuts import get_current_site
+
+from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.formrecognizer import DocumentAnalysisClient
+
+import six
+import json
+import imghdr
+from uuid import uuid4
 from pathlib import Path
 from os.path import join
+from decouple import config
+from base64 import b64decode
+
+from .models import CardData
+from .serializers import ImageUploadSerializer
+from .decoder import decode_base64_file
 
 
 # Credentials
@@ -24,6 +33,7 @@ def get( request, file):
         with open(file_location, 'rb') as f:
             file_data = f.read()
             ext = file.split(".")[-1]
+            print(ext)
             response = HttpResponse(content=file_data, content_type=f'image/{ext}')
             return response
     except IOError:
@@ -35,13 +45,46 @@ class TextExtractViewSet(generics.ListAPIView):
     queryset = CardData.objects.all()
     serializer_class = ImageUploadSerializer
 
+
+    # def decode_base64_file(data):
+
+    #     def get_file_extension(file_name, decoded_file):
+    #         extension=imghdr.what(file_name, decoded_file)
+    #         extension='jpg' if extension=='jpeg' else extension
+    #         return extension
+        
+    #      # Check if this is a base64 string
+    #     if isinstance(data, six.string_types):
+    #         # Check if the base64 string is in the "data:" format
+    #         if 'data:' in data and ';base64,' in data:
+    #             # Break out the header from the base64 content
+    #             header, data=data.split(';base64,')
+
+    #         # try to decode the file. Return validation error if is false
+    #         try:
+    #             decoded_file=b64decode(data)
+    #         except TypeError:
+    #             TypeError('invalid_image')
+            
+    #         # generate filename
+    #         file_name=str(uuid4.uuid4())[:12]
+
+    #         # get the file extansion
+    #         file_extension=get_file_extension(file_name,decoded_file)
+    #         complete_file_name = "%s.%s" % (file_name, file_extension)
+
+    #         file=ContentFile(decoded_file, name=complete_file_name)
+    #         return file,complete_file_name
+
     def post(self, request, *args, **kwargs):
+        
+        # print(image)
         try:
-            # Get uploaded file and generate a unique filename
-            file = request.data['file']
-            filename = file.name
-            ext = filename.split('.')[-1]
-            file_name = f'{uuid4().hex}.{ext}'
+            # Get base64 image string and generate a unique filename
+            data=json.loads(request.body.decode('utf-8'))
+            photo=data.get('picture')
+            image=photo.get('photo')
+            file,file_name=decode_base64_file(image)
             obj = CardData.objects.create(image=file, name=file_name)
             obj.save()
             image_url = f'/upload/{file_name}'
@@ -49,7 +92,7 @@ class TextExtractViewSet(generics.ListAPIView):
 
             # creating URL of the uploaded image
             formUrls = f'http://{current_site}{image_url}'
-            # print(formUrls)
+            print(formUrls)
 
             #  sample docs
             # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
@@ -61,7 +104,7 @@ class TextExtractViewSet(generics.ListAPIView):
 
             poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrls)
             business_cards = poller.result()
-            print(business_cards.documents)
+            # print(business_cards.documents)
             card_data = []
             phone_number=[]
             
