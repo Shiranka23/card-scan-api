@@ -31,5 +31,7 @@ jobs:
 
         script: |
           cd /home/user/CardScannApi 
+          git add .
+          git commit -m "d"
           git stash
           git pull origin main --force
