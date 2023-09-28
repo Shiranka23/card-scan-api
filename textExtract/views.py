@@ -46,40 +46,8 @@ class TextExtractViewSet(generics.ListAPIView):
     queryset = CardData.objects.all()
     serializer_class = ImageUploadSerializer
 
-
-    # def decode_base64_file(data):
-
-    #     def get_file_extension(file_name, decoded_file):
-    #         extension=imghdr.what(file_name, decoded_file)
-    #         extension='jpg' if extension=='jpeg' else extension
-    #         return extension
-        
-    #      # Check if this is a base64 string
-    #     if isinstance(data, six.string_types):
-    #         # Check if the base64 string is in the "data:" format
-    #         if 'data:' in data and ';base64,' in data:
-    #             # Break out the header from the base64 content
-    #             header, data=data.split(';base64,')
-
-    #         # try to decode the file. Return validation error if is false
-    #         try:
-    #             decoded_file=b64decode(data)
-    #         except TypeError:
-    #             TypeError('invalid_image')
-            
-    #         # generate filename
-    #         file_name=str(uuid4.uuid4())[:12]
-
-    #         # get the file extansion
-    #         file_extension=get_file_extension(file_name,decoded_file)
-    #         complete_file_name = "%s.%s" % (file_name, file_extension)
-
-    #         file=ContentFile(decoded_file, name=complete_file_name)
-    #         return file,complete_file_name
-
     def post(self, request, *args, **kwargs):
         
-        # print(image)
         try:
             # Get base64 image string and generate a unique filename
             data=json.loads(request.body.decode('utf-8'))
@@ -95,10 +63,6 @@ class TextExtractViewSet(generics.ListAPIView):
             formUrls = f'http://{current_site}{image_url}'
             # print(formUrls)
 
-            #  sample docs
-            # formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/business-card-english.jpg"
-           
-
             document_analysis_client = DocumentAnalysisClient(
                 endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
             )
@@ -110,8 +74,6 @@ class TextExtractViewSet(generics.ListAPIView):
             instance=CardData.objects.get(name=file_name)
             instance.image.delete()
             instance.delete()
-            # instance=CardData.objects.get(name=file_name)
-            # print('instance')
 
             card_data = []
             phone_number=[]
@@ -122,8 +84,6 @@ class TextExtractViewSet(generics.ListAPIView):
                 contact_names = business_card.fields.get("ContactNames")
                 if contact_names:
                     for contact_name in contact_names.value:
-                        # firstname=[contact_name.value["FirstName"].value if contact_name.value["FirstName"].value else []]
-                        # lastname=[contact_name.value["LastName"].value if contact_name.value["LastName"].value else []]
                         if contact_name.value["FirstName"]:
                             # print("firstname: ",contact_name.value["FirstName"].value)
                             firstname=contact_name.value["FirstName"].value
