@@ -30,8 +30,5 @@ jobs:
         port: 22
 
         script: |
-          cd /home/user/CardScannApi 
-          git add .
-          git commit -m "d"
-          git stash
+          cd /home/user/CardScannApi
           git pull origin main --force
