@@ -18,6 +18,9 @@ from os.path import join
 from decouple import config
 from base64 import b64decode
 
+# ise delete krna hai
+from PIL import Image
+
 from .models import CardData
 from .serializers import ImageUploadSerializer
 from .decoder import decode_base64_file
@@ -54,6 +57,9 @@ class TextExtractViewSet(generics.ListAPIView):
             photo=data.get('picture')
             image=photo.get('photo')
             file,file_name=decode_base64_file(image)
+            file_size=Image.open(file)
+            width, height=file_size.size
+            # print("width: ",width,", height: ",height)
             obj = CardData.objects.create(image=file, name=file_name)
             obj.save()
             image_url = f'/upload/{file_name}'
@@ -187,6 +193,7 @@ class TextExtractViewSet(generics.ListAPIView):
             }
             
             card_data.append(card_info)
+            # print(card_data)
             response_data = {
                 "status_code": 200,
                 "message": "Success",
@@ -195,5 +202,5 @@ class TextExtractViewSet(generics.ListAPIView):
             return Response(response_data)
         except Exception as e:
             error_message = str(e)
-            # print(error_message)
+            print(error_message)
             return Response({"error_message": error_message}, status=500)
