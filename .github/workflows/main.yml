@@ -32,3 +32,4 @@ jobs:
         script: |
           cd /home/user/CardScannApi
           git pull origin main --force
+          python ./manage.py runserver 0.0.0.0:1604
