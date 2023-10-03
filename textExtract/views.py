@@ -13,9 +13,6 @@ from os.path import join
 from pathlib import Path
 from decouple import config
 
-# ise delete krna hai
-from PIL import Image
-
 from .models import CardData
 from .serializers import ImageUploadSerializer
 from .decoder import decode_base64_file
@@ -31,7 +28,7 @@ def get( request, file):
         with open(file_location, 'rb') as f:
             file_data = f.read()
             ext = file.split(".")[-1]
-            # print(ext)
+
             response = HttpResponse(content=file_data, content_type=f'image/{ext}')
             return response
     except IOError:
@@ -85,7 +82,6 @@ def analyze_business_card(form_urls):
 
             addresses = business_card.fields.get("Addresses")
             add =[address.content for address in addresses.value ]  if addresses else " "
-
 
             mobile_phones = business_card.fields.get("MobilePhones")
             phone_number = [phone.content for phone in mobile_phones.value] if mobile_phones else []
