@@ -1,22 +1,17 @@
 from rest_framework import generics
 from rest_framework.response import Response
 
-from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.sites.shortcuts import get_current_site
 
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.formrecognizer import DocumentAnalysisClient
 
-import six
 import json
-import imghdr
-from uuid import uuid4
-from pathlib import Path
+import logging
 from os.path import join
+from pathlib import Path
 from decouple import config
-from base64 import b64decode
 
 # ise delete krna hai
 from PIL import Image
@@ -29,7 +24,6 @@ from .decoder import decode_base64_file
 # Credentials
 API_KEY = config("AZURE_API_KEY")
 ENDPOINT = config("AZURE_ENDPOINT")
-
 
 def get( request, file):
     file_location=join(Path(__file__).resolve().parent.parent, 'media','assets' , file)
@@ -45,155 +39,117 @@ def get( request, file):
         response = HttpResponseNotFound('<h1>File not exist</h1>')
         return response
 
+
+def analyze_business_card(form_urls):
+    try:
+        document_analysis_client = DocumentAnalysisClient(
+            endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
+        )
+
+        poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", form_urls)
+        business_cards = poller.result()
+
+        card_data = []
+
+        for idx, business_card in enumerate(business_cards.documents):
+            contact_names = business_card.fields.get("ContactNames")
+            name = ""
+            if contact_names:
+                for contact_name in contact_names.value:
+                    if contact_name.value.get("FirstName"):
+                        firstname = contact_name.value["FirstName"].value
+                    else:
+                        firstname = " "
+                    if contact_name.value.get("LastName"):
+                        lastname = contact_name.value["LastName"].value
+                    else:
+                        lastname = " "
+                    name = firstname + " " + lastname
+            else:
+                name = ' '
+
+            company_names = business_card.fields.get("CompanyNames")
+            company = [company_name.value for company_name in company_names.value] if company_names else []
+
+            departments = business_card.fields.get("Departments")
+            dprmt = [department.value for department in departments.value] if departments else []
+
+            job_titles = business_card.fields.get("JobTitles")
+            job = [job_title.value for job_title in job_titles.value] if job_titles else []
+
+            emails = business_card.fields.get("Emails")
+            mail = [email.value for email in emails.value] if emails else []
+
+            websites = business_card.fields.get("Websites")
+            site = [website.value for website in websites.value] if websites else []
+
+            addresses = business_card.fields.get("Addresses")
+            add =[address.content for address in addresses.value ]  if addresses else " "
+
+
+            mobile_phones = business_card.fields.get("MobilePhones")
+            phone_number = [phone.content for phone in mobile_phones.value] if mobile_phones else []
+
+            faxes = business_card.fields.get("Faxes")
+            faxNum = [fax.content for fax in faxes.value] if faxes else []
+
+            work_phones = business_card.fields.get("WorkPhones")
+            workPhone = [work_phone.content for work_phone in work_phones.value] if work_phones else []
+
+            other_phones = business_card.fields.get("OtherPhones")
+            otherPhone = [other_phone.value for other_phone in other_phones.value] if other_phones else []
+
+            card_info = {
+                "name": name,
+                "company": company,
+                "address": add,
+                "phoneNumbers": phone_number,
+                "fax": faxNum,
+                "email": mail,
+                "job": job,
+                "department": dprmt,
+                "website": site,
+            }
+
+            card_data.append(card_info)
+
+        return card_data
+    except Exception as e:
+        raise e
+
+
 class TextExtractViewSet(generics.ListAPIView):
     queryset = CardData.objects.all()
     serializer_class = ImageUploadSerializer
 
     def post(self, request, *args, **kwargs):
-        
+        logger = logging.getLogger(__name__)
         try:
             # Get base64 image string and generate a unique filename
-            data=json.loads(request.body.decode('utf-8'))
-            photo=data.get('picture')
-            image=photo.get('photo')
-            file,file_name=decode_base64_file(image)
-            file_size=Image.open(file)
-            width, height=file_size.size
-            # print("width: ",width,", height: ",height)
+            data = json.loads(request.body.decode('utf-8'))
+            photo = data.get('picture')
+            image = photo.get('photo')
+            file, file_name = decode_base64_file(image)
+            file_size = Image.open(file)
+            width, height = file_size.size
+
+            # Create a CardData object and save the image
             obj = CardData.objects.create(image=file, name=file_name)
             obj.save()
             image_url = f'/upload/{file_name}'
             current_site = get_current_site(request).domain
 
-            # creating URL of the uploaded image
-            formUrls = f'http://{current_site}{image_url}'
-            # print(formUrls)
+            # Creating URL of the uploaded image
+            form_urls = f'http://{current_site}{image_url}'
 
-            document_analysis_client = DocumentAnalysisClient(
-                endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY)
-            )
+            # Analyze the business card using Azure Document Analysis
+            card_data = analyze_business_card(form_urls)
 
-            poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", formUrls)
-            business_cards = poller.result()
-            # print(business_cards.documents)
-
-            instance=CardData.objects.get(name=file_name)
+            # Delete the CardData object and its associated image
+            instance = CardData.objects.get(name=file_name)
             instance.image.delete()
             instance.delete()
 
-            card_data = []
-            phone_number=[]
-            
-            # Extract information from the business card
-            for idx, business_card in enumerate(business_cards.documents):
-                # print("--------Analyzing business card #{}--------".format(idx + 1))
-                contact_names = business_card.fields.get("ContactNames")
-                if contact_names:
-                    for contact_name in contact_names.value:
-                        if contact_name.value["FirstName"]:
-                            # print("firstname: ",contact_name.value["FirstName"].value)
-                            firstname=contact_name.value["FirstName"].value
-                        else:
-                            firstname=" "
-                        if contact_name.value["LastName"]:
-                            # print("lastname: ",contact_name.value["LastName"].value)
-                            lastname=contact_name.value["LastName"].value
-                        else:
-                            lastname=" "
-                        name=firstname+" "+lastname
-                else:
-                    name=""
-                company_names = business_card.fields.get("CompanyNames")
-                if company_names:
-                    company=[company_name.value for company_name in company_names.value]
-                    # for company_name in company_names.value:
-                    # print("company: ",company_name.value)
-                        # company = company_name.value
-                else:
-                    company=''
-                departments = business_card.fields.get("Departments")
-                if departments:
-                    dprmt=[department.value for department in departments.value]
-                    # for department in departments.value:
-                        # print("department: ",department.value)
-                        # dprmt=department.value
-                else:
-                    dprmt=[]
-                job_titles = business_card.fields.get("JobTitles")
-                if job_titles:
-                    job=[job_title.value for job_title in job_titles.value]
-                    # for job_title in job_titles.value:
-                        # print("job title: ",job_title.value)
-                        # job=job_title.value
-                else:
-                    job=" "
-                emails = business_card.fields.get("Emails")
-                if emails:
-                    mail=[email.value for email in emails.value]
-                    # for email in emails.value:
-                        # print("email: ",email.value)
-                        # mail=email.value
-                else:
-                    mail=[]
-                websites = business_card.fields.get("Websites")
-                if websites:
-                    site=[website.value for website in websites.value]
-                    # for website in websites.value:
-                        # print("website: ",website.value)
-                        # site=website.value
-                else:
-                    site=[]
-                addresses = business_card.fields.get("Addresses")
-                if addresses:
-                    for address in addresses.value:
-                        # print("address: ",address.content)
-                        add=address.content
-                else:
-                    add=" "
-                mobile_phones = business_card.fields.get("MobilePhones")
-                if mobile_phones:
-                    for phone in mobile_phones.value:
-                        # print("phone: ".phone.content)
-                        phone_number.append(phone.content)
-                else:
-                    phoneNum=[]
-                faxes = business_card.fields.get("Faxes")
-                if faxes:
-                    faxNum=[fax.content for fax in faxes.value]
-                    # for fax in faxes.value:
-                        # print("fax: ", fax.content)
-                        # faxNum=fax.content
-                else:
-                    faxNum=[]
-                work_phones = business_card.fields.get("WorkPhones")
-                if work_phones:
-                    for work_phone in work_phones.value:
-                        # print("work_phone: ",work_phone.content)
-                        phone_number.append(work_phone.content)
-                else:
-                    workPhone=[]
-                other_phones = business_card.fields.get("OtherPhones")
-                if other_phones:
-                    for other_phone in other_phones.value:
-                        # print("other phone: ",other_phone.value)
-                        phone_number.append(other_phone.value)
-                else:
-                    otherPhone=[]
-               
-            card_info={
-                "name":name,
-                "company":company,
-                "address":add,
-                "phoneNumbers":phone_number,
-                "fax ":faxNum,
-                "email":mail,
-                "job":job,
-                "department":dprmt,
-                "website":site,
-            }
-            
-            card_data.append(card_info)
-            # print(card_data)
             response_data = {
                 "status_code": 200,
                 "message": "Success",
@@ -202,5 +158,5 @@ class TextExtractViewSet(generics.ListAPIView):
             return Response(response_data)
         except Exception as e:
             error_message = str(e)
-            # print(error_message)
+            logger.error(str(e), exc_info=True, stacklevel=2)
             return Response({"error_message": error_message}, status=500)
