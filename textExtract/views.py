@@ -126,8 +126,6 @@ class TextExtractViewSet(generics.ListAPIView):
             photo = data.get('picture')
             image = photo.get('photo')
             file, file_name = decode_base64_file(image)
-            file_size = Image.open(file)
-            width, height = file_size.size
 
             # Create a CardData object and save the image
             obj = CardData.objects.create(image=file, name=file_name)
