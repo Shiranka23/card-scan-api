@@ -32,3 +32,4 @@ jobs:
         script: |
           cd /home/user/CardScannApi
           git pull origin main --force
+          git status
