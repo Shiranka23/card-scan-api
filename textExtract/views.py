@@ -102,7 +102,7 @@ class TextExtractViewSet(generics.ListAPIView):
                             lastname=" "
                         name=firstname+" "+lastname
                 else:
-                    name=' '
+                    name=""
                 company_names = business_card.fields.get("CompanyNames")
                 if company_names:
                     company=[company_name.value for company_name in company_names.value]
@@ -202,5 +202,5 @@ class TextExtractViewSet(generics.ListAPIView):
             return Response(response_data)
         except Exception as e:
             error_message = str(e)
-            print(error_message)
+            # print(error_message)
             return Response({"error_message": error_message}, status=500)
