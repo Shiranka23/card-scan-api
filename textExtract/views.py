@@ -45,8 +45,14 @@ def analyze_business_card(form_urls):
 
         poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", form_urls)
         business_cards = poller.result()
+        print(business_cards.documents)
+        # for business_card in business_cards.documents:
+        #     print("Fields:")
+        #     for field in business_card.fields:
+        #         print(f"{field.label}: {field.value}")
 
         card_data = []
+        phone_number=[]
 
         for idx, business_card in enumerate(business_cards.documents):
             contact_names = business_card.fields.get("ContactNames")
@@ -84,16 +90,20 @@ def analyze_business_card(form_urls):
             add =[address.content for address in addresses.value ]  if addresses else " "
 
             mobile_phones = business_card.fields.get("MobilePhones")
-            phone_number = [phone.content for phone in mobile_phones.value] if mobile_phones else []
+            phoneNumber = [phone.value for phone in mobile_phones.value] if mobile_phones else []
+            phone_number.append(str(phoneNumber)[1:-1])
+
 
             faxes = business_card.fields.get("Faxes")
             faxNum = [fax.content for fax in faxes.value] if faxes else []
 
             work_phones = business_card.fields.get("WorkPhones")
             workPhone = [work_phone.content for work_phone in work_phones.value] if work_phones else []
+            phone_number.append(str(workPhone)[1:-1])
 
             other_phones = business_card.fields.get("OtherPhones")
             otherPhone = [other_phone.value for other_phone in other_phones.value] if other_phones else []
+            phone_number.append(str(otherPhone)[1:-1])
 
             card_info = {
                 "name": name,
