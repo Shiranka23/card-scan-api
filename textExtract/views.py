@@ -90,20 +90,29 @@ def analyze_business_card(form_urls):
             add =[address.content for address in addresses.value ]  if addresses else " "
 
             mobile_phones = business_card.fields.get("MobilePhones")
-            phoneNumber = [phone.value for phone in mobile_phones.value] if mobile_phones else []
-            phone_number.append(str(phoneNumber)[1:-1])
-
+            if mobile_phones:
+                    for phone in mobile_phones.value:
+                        phone_number.append(phone.content)
+            else:
+                None
 
             faxes = business_card.fields.get("Faxes")
             faxNum = [fax.content for fax in faxes.value] if faxes else []
-
+    
             work_phones = business_card.fields.get("WorkPhones")
-            workPhone = [work_phone.content for work_phone in work_phones.value] if work_phones else []
-            phone_number.append(str(workPhone)[1:-1])
+            if work_phones:
+                for work_phone in work_phones.value:
+                    phone_number.append(work_phone.content)
+                    print(work_phone.content)
+            else:
+                None
 
             other_phones = business_card.fields.get("OtherPhones")
-            otherPhone = [other_phone.value for other_phone in other_phones.value] if other_phones else []
-            phone_number.append(str(otherPhone)[1:-1])
+            if other_phones:
+                    for other_phone in other_phones.value:
+                        phone_number.append(other_phone.value)
+            else:
+                None
 
             card_info = {
                 "name": name,
