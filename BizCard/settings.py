@@ -30,7 +30,8 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env('DJANGO_DEBUG',default=False)
 
 
-ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co"]
+ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co:1604"]
+ALLOWED_HOSTS=['*']
 
 if env("DJANGO_ALLOWED_HOST"):
     ALLOWED_HOSTS.append(env("DJANGO_ALLOWED_HOST"))
@@ -93,7 +94,7 @@ WSGI_APPLICATION = 'BizCard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.'+str(env('DB_CONNECTION')),
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('DB_DATABASE'),
         'USER': env('DB_USERNAME'), 
         'PASSWORD': env('DB_PASSWORD'), 
