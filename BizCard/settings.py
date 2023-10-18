@@ -26,7 +26,7 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = config('DJANGO_DEBUG',default=False,cast=bool)
 
 
-ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","dam.denzai.group:8000"]
+ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","dam.denzai.group"]
 
 
 if config("DJANGO_ALLOWED_HOST"):
