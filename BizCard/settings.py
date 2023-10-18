@@ -12,20 +12,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from decouple import config
 from pathlib import Path
-env=config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# print(type(BASE_DIR1))
 BASE_DIR = Path(__file__).resolve().parent.parent
-# print(type(BASE_DIR))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DJANGO_DEBUG',default=False,cast=bool)
@@ -34,12 +29,12 @@ DEBUG = config('DJANGO_DEBUG',default=False,cast=bool)
 ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","dam.denzai.group:8000"]
 
 
-if env("DJANGO_ALLOWED_HOST"):
-    ALLOWED_HOSTS.append(env("DJANGO_ALLOWED_HOST"))
+if config("DJANGO_ALLOWED_HOST"):
+    ALLOWED_HOSTS.append(config("DJANGO_ALLOWED_HOST"))
 
 
-if env("DJANGO_ALLOWED_HOST"):
-    ALLOWED_HOSTS += env("DJANGO_ALLOWED_HOST").split(",")
+if config("DJANGO_ALLOWED_HOST"):
+    ALLOWED_HOSTS += config("DJANGO_ALLOWED_HOST").split(",")
   
 
 # Application definition
@@ -95,18 +90,14 @@ WSGI_APPLICATION = 'BizCard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_DATABASE'),
+        'USER': config('DB_USERNAME'), 
+        'PASSWORD': config('DB_PASSWORD'), 
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+        # 'OPTIONS': {"init_command": "SET default_storage_engine=INNODB",},
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env('DB_DATABASE'),
-    #     'USER': env('DB_USERNAME'), 
-    #     'PASSWORD': env('DB_PASSWORD'), 
-    #     'HOST': env('DB_HOST'),
-    #     'PORT': env('DB_PORT'),
-    #     # 'OPTIONS': {"init_command": "SET default_storage_engine=INNODB",},
-    # }
 }
 
 
@@ -153,8 +144,8 @@ MEDIA_URL = 'media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AZURE_ENDPOINT=env("AZURE_ENDPOINT")
-AZURE_API_KEY=env("AZURE_API_KEY")
+AZURE_ENDPOINT=config("AZURE_ENDPOINT")
+AZURE_API_KEY=config("AZURE_API_KEY")
 
 # allow upload big file
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 20 # 20M
