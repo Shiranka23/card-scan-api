@@ -45,11 +45,6 @@ def analyze_business_card(form_urls):
 
         poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-businessCard", form_urls)
         business_cards = poller.result()
-        # print(business_cards.documents)
-        # for business_card in business_cards.documents:
-        #     print("Fields:")
-        #     for field in business_card.fields:
-        #         print(f"{field.label}: {field.value}")
 
         card_data = []
         phone_number=[]
@@ -103,7 +98,6 @@ def analyze_business_card(form_urls):
             if work_phones:
                 for work_phone in work_phones.value:
                     phone_number.append(work_phone.content)
-                    print(work_phone.content)
             else:
                 None
 

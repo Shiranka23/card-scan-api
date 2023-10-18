@@ -16,16 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from textExtract import views, tests
+from textExtract import views
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
     path('upload/image/',views.TextExtractViewSet.as_view(), name='upload'),
     path('upload/<file>',views.get, name='upload'),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
-
-# if settings.DEBUG:
-# urlpatterns + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
