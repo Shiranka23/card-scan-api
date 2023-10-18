@@ -11,14 +11,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from decouple import config
-# from dotenv import main
-# main.load_dotenv()
-
-# import environs
-# from pathlib import Path
+from pathlib import Path
 env=config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# print(type(BASE_DIR1))
+BASE_DIR = Path(__file__).resolve().parent.parent
+# print(type(BASE_DIR))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -27,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DJANGO_DEBUG',default=False)
+DEBUG = config('DJANGO_DEBUG',default=False,cast=bool)
 
 
 ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","dam.denzai.group:8000"]
@@ -94,14 +95,18 @@ WSGI_APPLICATION = 'BizCard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_DATABASE'),
-        'USER': env('DB_USERNAME'), 
-        'PASSWORD': env('DB_PASSWORD'), 
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
-        # 'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': env('DB_DATABASE'),
+    #     'USER': env('DB_USERNAME'), 
+    #     'PASSWORD': env('DB_PASSWORD'), 
+    #     'HOST': env('DB_HOST'),
+    #     'PORT': env('DB_PORT'),
+    #     # 'OPTIONS': {"init_command": "SET default_storage_engine=INNODB",},
+    # }
 }
 
 
