@@ -26,23 +26,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+DEBUG = env('DJANGO_DEBUG',default=False)
 
 
-
-
-ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","c872-103-179-9-158.ngrok-free.app"]
-
-ALLOWED_HOSTS=["*"]
+ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co"]
 
 if env("DJANGO_ALLOWED_HOST"):
     ALLOWED_HOSTS.append(env("DJANGO_ALLOWED_HOST"))
 
 
-if env("DJANGO_ALLOWED_HOSTS"):
-    ALLOWED_HOSTS += env["DJANGO_ALLOWED_HOSTS"].split(",")
+if env("DJANGO_ALLOWED_HOST"):
+    ALLOWED_HOSTS += env("DJANGO_ALLOWED_HOST").split(",")
+  
 
 # Application definition
 
@@ -97,8 +93,13 @@ WSGI_APPLICATION = 'BizCard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.'+str(env('DB_CONNECTION')),
+        'NAME': env('DB_DATABASE'),
+        'USER': env('DB_USERNAME'), 
+        'PASSWORD': env('DB_PASSWORD'), 
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
+        # 'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
     }
 }
 
