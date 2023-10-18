@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, views
 from rest_framework.response import Response
 
 from django.http import HttpResponse, HttpResponseNotFound
@@ -127,10 +127,7 @@ def analyze_business_card(form_urls):
         raise e
 
 
-class TextExtractViewSet(generics.ListAPIView):
-    queryset = CardData.objects.all()
-    serializer_class = ImageUploadSerializer
-
+class TextExtractViewSet(views.APIView):
     def post(self, request, *args, **kwargs):
         logger = logging.getLogger(__name__)
         try:

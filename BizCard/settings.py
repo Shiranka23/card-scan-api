@@ -26,7 +26,7 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = config('DJANGO_DEBUG',default=False,cast=bool)
 
 
-ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1","digimonk.co","dam.denzai.group"]
+ALLOWED_HOSTS = ["localhost","::1", "127.0.0.1"]
 
 
 if config("DJANGO_ALLOWED_HOST"):
@@ -150,3 +150,11 @@ AZURE_API_KEY=config("AZURE_API_KEY")
 # allow upload big file
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 20 # 20M
 FILE_UPLOAD_MAX_MEMORY_SIZE = DATA_UPLOAD_MAX_MEMORY_SIZE
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ]
+}
