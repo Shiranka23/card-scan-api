@@ -82,7 +82,7 @@ def analyze_business_card(form_urls):
             site = [website.value for website in websites.value] if websites else []
 
             addresses = business_card.fields.get("Addresses")
-            add =[address.content for address in addresses.value ]  if addresses else " "
+            add =[address.content for address in addresses.value ]  if addresses else []
 
             mobile_phones = business_card.fields.get("MobilePhones")
             if mobile_phones:

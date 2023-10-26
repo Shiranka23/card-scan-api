@@ -7,12 +7,9 @@ def upload_location(instance, filename):
     return 'assets/%s' % (instance.name)
 
 class CardData(models.Model):
-    name=models.CharField(max_length=255,null=False, blank=False)
-    number=models.CharField(max_length=255, null=False, blank=False)
-    email=models.EmailField(max_length=255, null=False, blank=False)
-    address=models.TextField()
+    name=models.CharField(max_length=150,null=False, blank=False)
     image=models.ImageField(upload_to=upload_location)
 
     
     def __str__(self):
-        return self.name, self.address
+        return self.name

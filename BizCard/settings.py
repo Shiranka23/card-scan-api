@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'BizCard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.'+str(config('DB_CONNECTION')),
         'NAME': config('DB_DATABASE'),
         'USER': config('DB_USERNAME'), 
         'PASSWORD': config('DB_PASSWORD'), 
